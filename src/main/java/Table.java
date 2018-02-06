@@ -12,6 +12,7 @@ public class Table {
     private int width;
     private int height;
     private int spaceLeft;
+    private DropData lastDrop;
 
     public Table(int _width, int _height) {
         width = _width;
@@ -49,7 +50,8 @@ public class Table {
         if( j > width-1 ) return false;
 
         boolean dropped = false;
-        for( int i = 0 ; i < height && !dropped ; i++ ) {
+        int i = 0;
+        for( i = 0 ; i < height && !dropped ; i++ ) {
             if(table[i][j] == 0) {
                 table[i][j] = next;
                 dropped = true;
@@ -57,8 +59,11 @@ public class Table {
         }
 
         if(dropped) {
+            lastDrop = new DropData(i,j,next);
             next = (next == 1) ? 2 : 1;
             spaceLeft--;
+        } else {
+            lastDrop = null;
         }
 
         return dropped;
@@ -66,31 +71,28 @@ public class Table {
 
     public int getResult() {
         if(spaceLeft == 0) return DRAW;
+
         int ret = 0;
-        for(int i = 0; i < height ; i++ ) {
-            ret = isFour(i, 0, 0, 1);
-            if (ret > 0) return ret;
+        for(int i = 0; ret == 0 && i < height ; i++ ) {
+            ret = isFour(ret, i, 0, 0, 1);
+            ret = isFour(ret, i, 0,1,1);
+            ret = isFour(ret, i, 0,-1,1);
         }
-        for(int j = 0; j < width ; j++ ) {
-            ret = isFour(0, j, 1, 0);
-            if (ret > 0) return ret;
+        for(int j = 0; ret == 0 && j < width ; j++ ) {
+            ret = isFour(ret, 0, j, 1, 0);
+            ret = isFour(ret,0, j,1,1);
+            ret = isFour(ret,height-1, j, -1, 1);
         }
-        for(int i = 0; i < height ; i++ ) {
-            ret = isFour(i, 0,-1,1);
-            if (ret > 0) return ret;
-            ret = isFour(i, 0,1,1);
-            if (ret > 0) return ret;
-        }
-        for(int j = 0; j < width ; j++ ) {
-            ret = isFour(height-1, j, -1, 1);
-            if (ret > 0) return ret;
-            ret = isFour(0, j,1,1);
-            if (ret > 0) return ret;
-        }
-        return ONGOING;
+        return ret;
     }
 
-    private int isFour(int i, int j, int ie, int je) {
+    public DropData getLastDrop() {
+        return lastDrop;
+    }
+
+    private int isFour(int ret, int i, int j, int ie, int je) {
+        if(ret > 0) return ret;
+
         int last = table[i][j];
         int count = 1;
         i += ie;
