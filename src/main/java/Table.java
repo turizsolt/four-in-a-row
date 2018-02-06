@@ -14,7 +14,7 @@ public class Table {
     private int spaceLeft;
     private DropData lastDrop;
 
-    public Table(int _width, int _height) {
+    Table(int _width, int _height) {
         width = _width;
         height = _height;
         table = new int[height][width];
@@ -50,19 +50,19 @@ public class Table {
         if( j > width-1 ) return false;
 
         boolean dropped = false;
-        int i = 0;
+        int i;
         for( i = 0 ; i < height && !dropped ; i++ ) {
             if(table[i][j] == 0) {
                 table[i][j] = next;
                 dropped = true;
+
+                lastDrop = new DropData(i,j,next);
+                next = (next == 1) ? 2 : 1;
+                spaceLeft--;
             }
         }
 
-        if(dropped) {
-            lastDrop = new DropData(i,j,next);
-            next = (next == 1) ? 2 : 1;
-            spaceLeft--;
-        } else {
+        if(!dropped) {
             lastDrop = null;
         }
 

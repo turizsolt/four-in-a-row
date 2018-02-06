@@ -123,6 +123,7 @@ public class TestTable {
         assertEquals(Table.PLAYER_TWO_WON ,table.getResult());
     }
 
+    @Test
     public void testFourSecondDiagonally() {
         Table table = new Table(WIDTH, HEIGHT);
         table.drop(LEFT_COLUMN+3);
@@ -141,6 +142,18 @@ public class TestTable {
 
         table.drop(LEFT_COLUMN+3);
         assertEquals(Table.PLAYER_TWO_WON ,table.getResult());
+    }
+
+    @Test
+    public void testDraw() {
+        Table table = new Table(2, 2);
+        table.drop(0);
+        table.drop(0);
+        table.drop(1);
+        assertEquals(Table.ONGOING ,table.getResult());
+
+        table.drop(1);
+        assertEquals(Table.DRAW ,table.getResult());
     }
 
 }
