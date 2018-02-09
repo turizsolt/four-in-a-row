@@ -46,27 +46,34 @@ public class Table {
     }
 
     public boolean drop(int j) {
-        if( j < 0 ) return false;
-        if( j > width-1 ) return false;
+        if( !isInBound(j) ) return false;
 
         boolean dropped = false;
         int i;
-        for( i = 0 ; i < height && !dropped ; i++ ) {
-            if(table[i][j] == 0) {
-                table[i][j] = next;
-                dropped = true;
-
-                lastDrop = new DropData(i,j,next);
-                next = (next == 1) ? 2 : 1;
-                spaceLeft--;
+        for( i = 0 ; i < height ; i++ ) {
+            if(isEmptyCell(i, j)) {
+                return dropToCell(i, j);
             }
         }
 
-        if(!dropped) {
-            lastDrop = null;
-        }
+        lastDrop = null;
+        return false;
+    }
 
-        return dropped;
+    private boolean dropToCell(int i, int j) {
+        table[i][j] = next;
+        lastDrop = new DropData(i,j,next);
+        swapNext();
+        spaceLeft--;
+        return true;
+    }
+
+    private void swapNext() {
+        next = (next == 1) ? 2 : 1;
+    }
+
+    private boolean isEmptyCell(int i, int j) {
+        return table[i][j] == 0;
     }
 
     public int getResult() {
@@ -116,5 +123,9 @@ public class Table {
 
     private boolean isInBound(int i, int j) {
         return -1 < i && i < height && -1 < j && j < width;
+    }
+
+    private boolean isInBound(int j) {
+        return -1 < j && j < width;
     }
 }
